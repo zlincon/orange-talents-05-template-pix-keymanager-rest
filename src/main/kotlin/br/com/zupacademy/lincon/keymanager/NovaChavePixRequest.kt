@@ -4,8 +4,9 @@ import br.com.caelum.stella.validation.CPFValidator
 import br.com.zupacademy.lincon.RegistraChavePixRequest
 import br.com.zupacademy.lincon.TipoDeChave
 import br.com.zupacademy.lincon.TipoDeConta
+import br.com.zupacademy.lincon.keymanager.shared.validations.ValidPixKey
 import io.micronaut.core.annotation.Introspected
-import io.micronaut.validation.validator.constraints.EmailValidator
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator
 import java.util.*
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
@@ -13,15 +14,15 @@ import javax.validation.constraints.Size
 @ValidPixKey
 @Introspected
 class NovaChavePixRequest(
-  @field:NotNull val tipoDeConta: TipoDeContaRequest,
-  @field:Size(max = 77) val chave: String,
-  @field:NotNull val tipoDeChave: TipoDeChaveRequest
+  @field:NotNull val tipoDeConta: TipoDeContaRequest?,
+  @field:Size(max = 77) val chave: String?,
+  @field:NotNull val tipoDeChave: TipoDeChaveRequest?
 ) {
   fun toModelGrpc(clienteId: UUID): RegistraChavePixRequest {
     return RegistraChavePixRequest.newBuilder()
       .setClienteId(clienteId.toString())
-      .setTipoDeConta(tipoDeConta.atributoGrpc ?: TipoDeConta.UNKNOWN_TIPO_CONTA)
-      .setTipoDeChave(tipoDeChave.atributoGrpc ?: TipoDeChave.UNKNOWN_TIPO_CHAVE)
+      .setTipoDeConta(tipoDeConta?.atributoGrpc ?: TipoDeConta.UNKNOWN_TIPO_CONTA)
+      .setTipoDeChave(tipoDeChave?.atributoGrpc ?: TipoDeChave.UNKNOWN_TIPO_CHAVE)
       .setChave(chave ?: "")
       .build()
   }
@@ -30,7 +31,7 @@ class NovaChavePixRequest(
 
 enum class TipoDeChaveRequest(val atributoGrpc: TipoDeChave) {
   CPF(TipoDeChave.CPF) {
-    override fun valida(chave: String): Boolean {
+    override fun valida(chave: String?): Boolean {
       if (chave.isNullOrEmpty()) {
         return false
       }
@@ -40,15 +41,17 @@ enum class TipoDeChaveRequest(val atributoGrpc: TipoDeChave) {
     }
   },
   CELULAR(TipoDeChave.CELULAR){
-    override fun valida(chave: String): Boolean {
-      if(chave.isNullOrBlank()) false
+    override fun valida(chave: String?): Boolean {
+      if(chave.isNullOrBlank()) return false
 
       return chave.matches("^\\+[1-9][0-9]\\d{1,14}\$".toRegex())
     }
   },
   EMAIL(TipoDeChave.EMAIL){
-    override fun valida(chave: String): Boolean {
-      if (chave.isNullOrBlank()) false
+    override fun valida(chave: String?): Boolean {
+      if (chave.isNullOrBlank()) {
+        return false
+      }
 
       return EmailValidator().run {
         initialize(null)
@@ -57,12 +60,12 @@ enum class TipoDeChaveRequest(val atributoGrpc: TipoDeChave) {
     }
   },
   ALEATORIA(TipoDeChave.ALEATORIA) {
-    override fun valida(chave: String): Boolean = chave.isNullOrBlank()
+    override fun valida(chave: String?): Boolean = chave.isNullOrBlank()
   }
 
   ;
 
-  abstract fun valida(chave: String): Boolean
+  abstract fun valida(chave: String?): Boolean
 }
 
 enum class TipoDeContaRequest(val atributoGrpc: TipoDeConta) {

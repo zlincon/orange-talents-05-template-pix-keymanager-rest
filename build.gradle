@@ -41,6 +41,7 @@ dependencies {
 
   implementation("io.micronaut.grpc:micronaut-grpc-client-runtime")
   implementation("br.com.caelum.stella:caelum-stella-core:2.1.2")
+  implementation("org.hibernate.validator:hibernate-validator:6.1.6.Final")
 
   runtimeOnly("ch.qos.logback:logback-classic")
   runtimeOnly("com.h2database:h2")
