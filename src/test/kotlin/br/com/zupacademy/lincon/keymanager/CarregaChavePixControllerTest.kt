@@ -119,31 +119,31 @@ class CarregaChavePixControllerTest {
       .build()
   }
 
-
   private fun carregaChavePixResponse(clienteId: String, pixId: String): CarregaChavePixResponse {
     return CarregaChavePixResponse.newBuilder()
       .setClienteId(clienteId)
       .setPixId(pixId)
-      .setChave(CarregaChavePixResponse.ChavePix.newBuilder()
-        .setTipo(TIPO_DE_CHAVE_EMAIL)
-        .setChave(CHAVE_EMAIL)
-        .setConta(
-          CarregaChavePixResponse.ChavePix.ContaInfo.newBuilder()
-            .setTipo(CONTA_CORRENTE)
-            .setInstituicao(INSTITUICAO)
-            .setNomeDoTitular(TITULAR)
-            .setCpfDoTitular(DOCUMENTO_DO_TITULAR)
-            .setAgencia(AGENCIA)
-            .setNumeroDaConta(NUMERO_DA_CONTA)
-            .build()
-        )
-        .setCriadaEm(CHAVE_CRIADA_EM.let {
-          val createdAt = it.atZone(ZoneId.of("UTC")).toInstant()
-          Timestamp.newBuilder()
-            .setSeconds(createdAt.epochSecond)
-            .setNanos(createdAt.nano)
-            .build()
-        })
+      .setChave(
+        CarregaChavePixResponse.ChavePix.newBuilder()
+          .setTipo(TIPO_DE_CHAVE_EMAIL)
+          .setChave(CHAVE_EMAIL)
+          .setConta(
+            CarregaChavePixResponse.ChavePix.ContaInfo.newBuilder()
+              .setTipo(CONTA_CORRENTE)
+              .setInstituicao(INSTITUICAO)
+              .setNomeDoTitular(TITULAR)
+              .setCpfDoTitular(DOCUMENTO_DO_TITULAR)
+              .setAgencia(AGENCIA)
+              .setNumeroDaConta(NUMERO_DA_CONTA)
+              .build()
+          )
+          .setCriadaEm(CHAVE_CRIADA_EM.let {
+            val createdAt = it.atZone(ZoneId.of("UTC")).toInstant()
+            Timestamp.newBuilder()
+              .setSeconds(createdAt.epochSecond)
+              .setNanos(createdAt.nano)
+              .build()
+          })
       ).build()
   }
 
